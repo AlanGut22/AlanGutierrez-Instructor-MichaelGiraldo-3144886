@@ -49,7 +49,7 @@ public class Biblioteca {
         }
 
         if (usuario.librosPrestados.size() == 3) {
-            System.out.println("El usuario ya tiene 3 libros prestados. No se puede prestar más.");
+            System.out.println("El usuario " + usuario.nombre + " ya tiene el máximo de 3 libros prestados.");
             return;
         }
         usuario.agregarPrestamo(libro);

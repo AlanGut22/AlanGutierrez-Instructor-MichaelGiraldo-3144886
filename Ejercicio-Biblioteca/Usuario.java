@@ -20,7 +20,6 @@ public class Usuario {
             librosPrestados.add(libro);
             return true;
         } else {
-            System.out.println("El usuario ya tiene el máximo de 3 libros prestados.");
             return false;
         }
     }
