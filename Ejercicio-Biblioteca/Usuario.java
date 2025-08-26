@@ -1,23 +1,22 @@
 import java.util.ArrayList;
-import java.util.List;
 
 public class Usuario {
-    private String nombre;
-    private String idUsuario;
-    private List<Libro> librosPrestados;
+    public String nombre;
+    public Integer idUsuario;
+    public ArrayList<Libro> librosPrestados;
 
-    public Usuario(String nombre, String idUsuario) {
+    public Usuario(String nombre, Integer idUsuario) {
         this.nombre = nombre;
         this.idUsuario = idUsuario;
         this.librosPrestados = new ArrayList<>();
     }
 
     public void mostrarDatos() {
-        System.out.println("Usuario: " + nombre + " | ID: " + idUsuario + " | Libros prestados: " + librosPrestados.size());
+        System.out.println("Usuario: " + nombre + " - ID: " + idUsuario + " - Libros prestados: " + librosPrestados.size());
     }
 
     public boolean agregarPrestamo(Libro libro) {
-        if (librosPrestados.size() < 3) {
+        if (librosPrestados.size() <= 3) {
             librosPrestados.add(libro);
             return true;
         } else {
@@ -28,9 +27,5 @@ public class Usuario {
 
     public boolean devolverLibro(Libro libro) {
         return librosPrestados.remove(libro);
-    }
-
-    public String getIdUsuario() {
-        return idUsuario;
     }
 }

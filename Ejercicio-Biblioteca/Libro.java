@@ -1,10 +1,10 @@
 public class Libro {
-    private String titulo;
-    private String autor;
-    private String codigo;
-    private boolean disponible;
+    public String titulo;
+    public String autor;
+    public Integer codigo;
+    public boolean disponible;
 
-    public Libro(String titulo, String autor, String codigo) {
+    public Libro(String titulo, String autor, Integer codigo) {
         this.titulo = titulo;
         this.autor = autor;
         this.codigo = codigo;
@@ -12,7 +12,7 @@ public class Libro {
     }
 
     public void mostrarDatos() {
-        System.out.println("Código: " + codigo + " | Título: " + titulo + " | Autor: " + autor + " | Disponible: " + disponible);
+        System.out.println("Código: " + codigo + " - Título: " + titulo + " - Autor: " + autor + " - Disponible: " + disponible);
     }
 
     public void marcarPrestado() {
@@ -21,13 +21,5 @@ public class Libro {
 
     public void marcarDisponible() {
         disponible = true;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public boolean isDisponible() {
-        return disponible;
     }
 }

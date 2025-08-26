@@ -1,102 +1,135 @@
 import java.util.ArrayList;
-import java.util.List;
 
 public class Biblioteca {
-    private List<Libro> libros;
-    private List<Usuario> usuarios;
-    private List<Prestamo> prestamos;
+    public ArrayList<Libro> listaLibros;
+    public ArrayList<Usuario> listaUsuarios;
+    public ArrayList<RegistroPrestamo> prestamo = new ArrayList<>();;
 
     public Biblioteca() {
-        libros = new ArrayList<>();
-        usuarios = new ArrayList<>();
-        prestamos = new ArrayList<>();
+        this.listaLibros = new ArrayList<Libro>();
+        this.listaUsuarios = new ArrayList<Usuario>();
+    }
+
+    public class RegistroPrestamo {
+        Usuario usuario;
+        Libro libro;
+        Integer fechaInicio;
+        Integer fechaLimite;
+
+        public RegistroPrestamo(Usuario usuario, Libro libro, Integer fechaInicio, Integer fechaLimite) {
+            this.usuario = usuario;
+            this.libro = libro;
+            this.fechaInicio = fechaInicio;
+            this.fechaLimite = fechaLimite;
+        }
     }
 
     public void registrarLibro(Libro libro) {
-        libros.add(libro);
+        listaLibros.add(libro);
+        System.out.println("Libro registrado: " + libro.titulo);
     }
 
     public void registrarUsuario(Usuario usuario) {
-        usuarios.add(usuario);
+        listaUsuarios.add(usuario);
+        System.out.println("Usuario registrado: " + usuario.nombre);
     }
 
-    public void prestarLibro(String idUsuario, String codigoLibro, Integer diaActual) {
-        Usuario usuario = buscarUsuario(idUsuario);
+    public void prestarLibro(Integer codigoLibro, Integer idUsuario, Integer fechaInicio) {
         Libro libro = buscarLibro(codigoLibro);
+        Usuario usuario = buscarUsuario(idUsuario);
 
-        if (usuario != null && libro != null && libro.isDisponible()) {
-            if (usuario.agregarPrestamo(libro)) {
-                libro.marcarPrestado();
-                Integer fechaLimite = diaActual + 7;
-                Prestamo prestamo = new Prestamo(usuario, libro, diaActual, fechaLimite);
-                prestamos.add(prestamo);
-                System.out.println("Libro prestado correctamente. Devuélvalo antes del día " + fechaLimite);
-            }
-        } else {
-            System.out.println("No se puede realizar el préstamo.");
+        if (libro == null || usuario == null) {
+            System.out.println("Libro o usuario no encontrado.");
+            return;
         }
+
+        if (libro.disponible == false) {
+            System.out.println("El libro no está disponible.");
+            return;
+        }
+
+        if (usuario.librosPrestados.size() == 3) {
+            System.out.println("El usuario ya tiene 3 libros prestados. No se puede prestar más.");
+            return;
+        }
+        usuario.agregarPrestamo(libro);
+
+        libro.marcarPrestado();
+        Integer fechaLimite = fechaInicio + 7;
+        prestamo.add(new RegistroPrestamo(usuario, libro, fechaInicio, fechaLimite));
+        System.out.println("Libro prestado. Fecha límite: día " + fechaLimite);
     }
 
-    public void devolverLibro(String idUsuario, String codigoLibro, Integer diaActual) {
-        Prestamo prestamoEncontrado = null;
+    public void devolverLibro(Integer codigoLibro, Integer idUsuario, Integer fechaInicio) {
+        Libro libro = buscarLibro(codigoLibro);
+        Usuario usuario = buscarUsuario(idUsuario);
 
-        for (Prestamo p : prestamos) {
-            if (p.getUsuario().getIdUsuario().equals(idUsuario) && p.getLibro().getCodigo().equals(codigoLibro)) {
-                prestamoEncontrado = p;
+        if (libro == null || usuario == null || usuario.devolverLibro(libro) != true) {
+            System.out.println("Error al devolver el libro.");
+            return;
+        }
+
+        libro.marcarDisponible();
+
+        for (int i = 0; i < prestamo.size(); i++) {
+            RegistroPrestamo registro = prestamo.get(i);
+
+            if (registro.libro.codigo == codigoLibro && registro.usuario.idUsuario == idUsuario) {
+                Integer diasRetraso = fechaInicio - registro.fechaLimite;
+                if (diasRetraso > 0) {
+                    System.out.println("Multa por retraso: $" + (diasRetraso * 500));
+                } else {
+                    System.out.println("Libro devuelto a tiempo. Sin multa.");
+                }
+                prestamo.remove(i);
                 break;
             }
-        }
-
-        if (prestamoEncontrado != null) {
-            Integer retraso = diaActual - prestamoEncontrado.getFechaLimite();
-            if (retraso > 0) {
-                Integer multa = retraso * 500;
-                System.out.println("Devolución tardía. Multa: $" + multa);
-            } else {
-                System.out.println("Libro devuelto a tiempo, sin multa.");
-            }
-
-            prestamoEncontrado.getLibro().marcarDisponible();
-            prestamoEncontrado.getUsuario().devolverLibro(prestamoEncontrado.getLibro());
-            prestamos.remove(prestamoEncontrado);
-        } else {
-            System.out.println("No se encontró el préstamo.");
         }
     }
 
     public void mostrarLibrosDisponibles() {
-        for (Libro l : libros) {
-            if (l.isDisponible()) {
-                l.mostrarDatos();
+        System.out.println("Libros disponibles:");
+        for (int i = 0; i < listaLibros.size(); i++) {
+            Libro libro = listaLibros.get(i);
+            if (libro.disponible) {
+                libro.mostrarDatos();
             }
         }
+
     }
 
     public void mostrarUsuarios() {
-        for (Usuario u : usuarios) {
-            u.mostrarDatos();
+        System.out.println("Usuarios:");
+        for (int i = 0; i < listaUsuarios.size(); i++) {
+            Usuario usuario = listaUsuarios.get(i);
+            usuario.mostrarDatos();
         }
     }
 
     public void mostrarHistorialPrestamos() {
-        for (Prestamo p : prestamos) {
-            p.mostrarDatos();
+        System.out.println("Historial de préstamos:");
+
+        for (int i = 0; i < prestamo.size(); i++) {
+            RegistroPrestamo registro = prestamo.get(i);
+            System.out.println("Usuario: " + registro.usuario.nombre + " - Libro: " + registro.libro.titulo + " - Inicio: Día " + registro.fechaInicio + " - Límite: Día " + registro.fechaLimite);
         }
     }
 
-    private Usuario buscarUsuario(String idUsuario) {
-        for (Usuario u : usuarios) {
-            if (u.getIdUsuario().equals(idUsuario)) {
-                return u;
+    public Libro buscarLibro(Integer codigo) {
+        for (int i = 0; i < listaLibros.size(); i++) {
+            Libro libro = listaLibros.get(i);
+            if (libro.codigo == codigo) {
+                return libro;
             }
         }
         return null;
     }
 
-    private Libro buscarLibro(String codigo) {
-        for (Libro l : libros) {
-            if (l.getCodigo().equals(codigo)) {
-                return l;
+    public Usuario buscarUsuario(Integer idUsuario) {
+        for (int i = 0; i < listaUsuarios.size(); i++) {
+            Usuario usuario = listaUsuarios.get(i);
+            if (usuario.idUsuario == idUsuario) {
+                return usuario;
             }
         }
         return null;

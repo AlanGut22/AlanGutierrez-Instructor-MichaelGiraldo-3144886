@@ -3,8 +3,9 @@ import java.util.Scanner;
 public class Main {
 	public static void main(String[] args) {
 		Biblioteca biblioteca = new Biblioteca();
-		Scanner sc = new Scanner(System.in);
-		Integer opcion, diaActual = 0;
+		Scanner scanner = new Scanner(System.in);
+		Integer opcion;
+		Integer diaActual = 0;
 
 		do {
 			System.out.println("\n===== MENÚ BIBLIOTECA =====");
@@ -18,61 +19,69 @@ public class Main {
 			System.out.println("8. Avanzar día");
 			System.out.println("9. Salir");
 			System.out.print("Seleccione opción: ");
-			opcion = sc.nextInt();
-			sc.nextLine();
+			opcion = scanner.nextInt();
+			scanner.nextLine();
 
 			switch (opcion) {
 				case 1:
 					System.out.print("Título: ");
-					String titulo = sc.nextLine();
+					String titulo = scanner.nextLine();
 					System.out.print("Autor: ");
-					String autor = sc.nextLine();
+					String autor = scanner.nextLine();
 					System.out.print("Código: ");
-					String codigo = sc.nextLine();
+					Integer codigo = scanner.nextInt();
 					biblioteca.registrarLibro(new Libro(titulo, autor, codigo));
 					break;
+
 				case 2:
 					System.out.print("Nombre: ");
-					String nombre = sc.nextLine();
+					String nombre = scanner.nextLine();
 					System.out.print("ID Usuario: ");
-					String id = sc.nextLine();
-					biblioteca.registrarUsuario(new Usuario(nombre, id));
+					Integer idUsuario = scanner.nextInt();
+					biblioteca.registrarUsuario(new Usuario(nombre, idUsuario));
 					break;
+
 				case 3:
 					System.out.print("ID Usuario: ");
-					String idP = sc.nextLine();
+					Integer idUsuarioPrestamo = scanner.nextInt();
 					System.out.print("Código Libro: ");
-					String codP = sc.nextLine();
-					biblioteca.prestarLibro(idP, codP, diaActual);
+					Integer codigoLibroPrestamo = scanner.nextInt();
+					biblioteca.prestarLibro(codigoLibroPrestamo, idUsuarioPrestamo, diaActual);
 					break;
+
 				case 4:
 					System.out.print("ID Usuario: ");
-					String idD = sc.nextLine();
+					Integer idUsuarioDevolucion = scanner.nextInt();
 					System.out.print("Código Libro: ");
-					String codD = sc.nextLine();
-					biblioteca.devolverLibro(idD, codD, diaActual);
+					Integer codigoLibroDevolucion = scanner.nextInt();
+					biblioteca.devolverLibro(codigoLibroDevolucion, idUsuarioDevolucion, diaActual);
 					break;
+
 				case 5:
 					biblioteca.mostrarLibrosDisponibles();
 					break;
+
 				case 6:
 					biblioteca.mostrarUsuarios();
 					break;
+
 				case 7:
 					biblioteca.mostrarHistorialPrestamos();
 					break;
+
 				case 8:
 					diaActual++;
 					System.out.println("Día avanzado. Ahora es día " + diaActual);
 					break;
+
 				case 9:
 					System.out.println("Saliendo...");
 					break;
+
 				default:
 					System.out.println("Opción inválida.");
 			}
 		} while (opcion != 9);
-
-		sc.close();
+		scanner.close();
 	}
 }
