@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Biblioteca {
     public ArrayList<Libro> listaLibros;
     public ArrayList<Usuario> listaUsuarios;
-    public ArrayList<RegistroPrestamo> prestamo = new ArrayList<>();;
+    public ArrayList<RegistroPrestamo> prestamo = new ArrayList<>();
 
     public Biblioteca() {
         this.listaLibros = new ArrayList<Libro>();
